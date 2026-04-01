@@ -62,85 +62,85 @@ export default function PredictPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
-    const heightM = parseFloat(form.height) / 100;
-    const bmi = parseFloat(
-      (parseFloat(form.weight) / (heightM * heightM)).toFixed(1)
-    );
-
-    const payload = {
-      ...form,
-      bmi,
-      age_years: parseInt(form.age_years),
+    const handleChange = (
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+      setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
-    try {
-      const res = await fetch("/api/predict", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error("Server error");
-      const data = await res.json();
-      setResult({
-        prediction: data.prediction,
-        probability: data.probability,
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      setLoading(true);
+      setError(null);
+      setResult(null);
+
+      const heightM = parseFloat(form.height) / 100;
+      const bmi = parseFloat(
+        (parseFloat(form.weight) / (heightM * heightM)).toFixed(1)
+      );
+
+      const payload = {
+        ...form,
         bmi,
-        bmiCategory: getBMICategory(bmi),
-      });
-      setTimeout(() => {
-        document
-          .getElementById("result-card")
-          ?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 100);
-    } catch {
-      setError("Failed to get prediction. Make sure the Flask server is running.");
-    } finally {
-      setLoading(false);
-    }
-  };
+        age_years: parseInt(form.age_years),
+      };
 
-  const percent = result ? (result.probability * 100).toFixed(1) : "0";
-  const riskLevel: "low" | "moderate" | "high" =
-    result
-      ? result.probability < 0.33
-        ? "low"
-        : result.probability < 0.66
-        ? "moderate"
-        : "high"
-      : "low";
+      try {
+        const res = await fetch("/api/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Server error");
+        const data = await res.json();
+        setResult({
+          prediction: data.prediction,
+          probability: data.probability,
+          bmi,
+          bmiCategory: getBMICategory(bmi),
+        });
+        setTimeout(() => {
+          document
+            .getElementById("result-card")
+            ?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      } catch {
+        setError("Failed to get prediction. Make sure the Flask server is running.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const riskConfig = {
-    low: {
-      label: "LOW RISK",
-      bar: "bg-emerald-500",
-      bg: "bg-emerald-500/10 border-emerald-500/30",
-      text: "text-emerald-600 dark:text-emerald-400",
-    },
-    moderate: {
-      label: "MODERATE RISK",
-      bar: "bg-amber-500",
-      bg: "bg-amber-500/10 border-amber-500/30",
-      text: "text-amber-600 dark:text-amber-400",
-    },
-    high: {
-      label: "HIGH RISK",
-      bar: "bg-red-500",
-      bg: "bg-red-500/10 border-red-500/30",
-      text: "text-red-600 dark:text-red-400",
-    },
-  };
+    const percent = result ? (result.probability * 100).toFixed(1) : "0";
+    const riskLevel: "low" | "moderate" | "high" =
+      result
+        ? result.probability < 0.33
+          ? "low"
+          : result.probability < 0.66
+          ? "moderate"
+          : "high"
+        : "low";
+
+    const riskConfig = {
+      low: {
+        label: "LOW RISK",
+        bar: "bg-emerald-500",
+        bg: "bg-emerald-500/10 border-emerald-500/30",
+        text: "text-emerald-600 dark:text-emerald-400",
+      },
+      moderate: {
+        label: "MODERATE RISK",
+        bar: "bg-amber-500",
+        bg: "bg-amber-500/10 border-amber-500/30",
+        text: "text-amber-600 dark:text-amber-400",
+      },
+      high: {
+        label: "HIGH RISK",
+        bar: "bg-red-500",
+        bg: "bg-red-500/10 border-red-500/30",
+        text: "text-red-600 dark:text-red-400",
+      },
+    };
 
   const inputBase =
     "w-full px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 transition-all";
