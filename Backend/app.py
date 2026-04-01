@@ -1,10 +1,12 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 import numpy as np
 import pandas as pd
 import pickle
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 model = pickle.load(open("model/rf_model.pkl","rb"))
 df = pd.read_csv("cardio_train_clean.csv")

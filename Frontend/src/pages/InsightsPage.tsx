@@ -66,7 +66,8 @@ export default function InsightsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/graph_data")
+    const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+    fetch(`${API_BASE}/api/graph_data`)
       .then((r) => {
         if (!r.ok) throw new Error("Failed to fetch");
         return r.json();
