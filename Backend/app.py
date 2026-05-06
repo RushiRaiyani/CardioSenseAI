@@ -13,18 +13,6 @@ df = pd.read_csv("cardio_train_clean.csv")
 if 'age_years' not in df.columns:
     df['age_years'] = (df['age'] / 365).round(1)
 
-@app.route("/")
-def home():
-    return render_template("index.html")
-
-@app.route("/predict")
-def predict():
-    return render_template("predict.html")
-
-@app.route("/graphs")
-def graphs():
-    return render_template("graphs.html")
-
 @app.route("/api/graph_data")
 def graph_data():
     # Round Age to nearest integer for chart
